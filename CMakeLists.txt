@@ -19,9 +19,12 @@ add_subdirectory(libraries/glfw-3.3.9)
 
 set(SOURCE_FILES source/main.cpp
         source/game.cpp
+        libraries/glad/src/glad.c
 )
 
 set(HEADER_FILES includes/game.h
+        includes/types.h
+        includes/utility/systemTimer.h
 
 )
 
@@ -30,6 +33,7 @@ if(WIN32)
 
     SET(SOURCE_FILES ${SOURCE_FILES}
             source/platform/windows/windowsWindow.cpp
+            source/platform/windows/systemTimer.cpp
     )
 
     SET(HEADER_FILES ${HEADER_FILES}
@@ -41,11 +45,13 @@ elseif(APPLE)
 
     SET(SOURCE_FILES ${SOURCE_FILES}
             source/platform/macos/macOSWindow.cpp
+            source/platform/macos/systemTimer.cpp
 
     )
 
     SET(HEADER_FILES ${HEADER_FILES}
             includes/platform/macos/window.h
+
     )
 
 endif()

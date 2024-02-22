@@ -1,6 +1,13 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "types.h"
+#include "window.h"
+
+enum class InitializationStatus {
+
+};
+
 
 class Game {
 public:
@@ -8,6 +15,12 @@ public:
 
     bool Initialize();
     void Run();
+    void Shutdown();
+
+private:
+    bool isRunning {true};
+
+    Scope<Window> window;
 };
 
 

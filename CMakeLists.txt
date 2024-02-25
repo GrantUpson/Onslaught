@@ -20,11 +20,20 @@ add_subdirectory(libraries/glfw-3.3.9)
 set(SOURCE_FILES source/main.cpp
         source/game.cpp
         libraries/glad/src/glad.c
+        source/state/GameState.cpp
+        source/state/splashScreen.cpp
+        source/state/mainMenu.cpp
+        source/state/overworld.cpp
 )
 
 set(HEADER_FILES includes/game.h
         includes/types.h
         includes/utility/systemTimer.h
+        includes/state/gameState.h
+        includes/state/State.h
+        includes/state/splashScreen.h
+        includes/state/mainMenu.h
+        includes/state/overworld.h
 
 )
 

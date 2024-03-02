@@ -1,8 +1,12 @@
 #include "game.h"
+
+#include <iostream>
+#include <ostream>
+
 #include "window.h"
+#include "rendering/renderer2D.h"
 #include "state/gameState.h"
 #include "state/overworld.h"
-#include "utility/systemTimer.h"
 
 
 bool Game::Initialize() {
@@ -10,6 +14,8 @@ bool Game::Initialize() {
 
     //TODO Create window with settings loaded
     window = std::make_unique<Window>("Onslaught", true, true, 640, 360);
+    //window = std::make_unique<Window>("Onslaught", true, true, 1920, 1080);
+    Renderer2D::Initialize();
     GameState::SetCurrentGameState(std::make_unique<Overworld>());
 
     return true;
@@ -17,40 +23,55 @@ bool Game::Initialize() {
 
 
 void Game::Run() {
-    constexpr uint32 UPDATES_PER_SECOND = 60;
-    constexpr uint32 SKIP_TICKS = 1000 / UPDATES_PER_SECOND;
-    constexpr uint32 MAX_FRAME_SKIP = 10;
+    constexpr double UPDATES_PER_SECOND = 60.0;
+    constexpr double TIME_STEP = 1.0 / UPDATES_PER_SECOND;
 
-    uint64 nextUpdate = SystemTimer::GetTickCountSinceInitialization();
+    double lastTime = glfwGetTime();
+    double accumulator = 0.0;
+
+    // For calculating FPS and updates
+    uint32_t frames = 0;
+    uint32_t updates = 0;
+    double timer = lastTime;
+
 
     while (isRunning) {
-        uint32 numLoops = 0;
+        double now = glfwGetTime();
+        double frameTime = now - lastTime;
+        lastTime = now;
+        accumulator += frameTime;
 
-        while(SystemTimer::GetTickCountSinceInitialization() > nextUpdate && numLoops < MAX_FRAME_SKIP) {
+        while (accumulator >= TIME_STEP) {
             if (glfwGetKey(window->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                 isRunning = false;
                 break;
             }
-            //TODO Process input properly
 
             GameState::GetCurrentGameState()->Update();
 
-            nextUpdate += SKIP_TICKS;
-            numLoops++;
+            updates++; // Updates tracking
+            accumulator -= TIME_STEP;
         }
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
         GameState::GetCurrentGameState()->Render();
+        frames++;  // FPS tracking
 
         glfwSwapBuffers(window->GetWindow());
         glfwPollEvents();
+
+        // Log FPS and updates every second.
+        if (now - timer >= 1.0) {
+            std::cout << "FPS: " << frames << " Updates:" << updates << std::endl;
+            timer += 1.0;
+            frames = 0;
+            updates = 0;
+        }
     }
 }
 
 
 void Game::Shutdown() {
+    Renderer2D::Shutdown();
     window->Close();
 }
 

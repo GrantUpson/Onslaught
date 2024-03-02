@@ -4,10 +4,6 @@
 #include "types.h"
 #include "window.h"
 
-enum class InitializationStatus {
-
-};
-
 
 class Game {
 public:
@@ -19,7 +15,6 @@ public:
 
 private:
     bool isRunning {true};
-
     Scope<Window> window;
 };
 

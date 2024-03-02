@@ -6,35 +6,51 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/libraries)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/libraries)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(ASSETS_DIR "${CMAKE_SOURCE_DIR}/assets")
+set(BINARY_ASSETS_DIR "${CMAKE_BINARY_DIR}/bin/assets")
+
+# Copies the asset directory into the bin folder
+add_custom_target(copy_assets ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_DIR} ${BINARY_ASSETS_DIR}
+    COMMENT "Copying Assets"
+)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 include_directories(includes)
-include_directories(libraries)
+include_directories(SYSTEM libraries)
 include_directories(libraries/glad/include)
 include_directories(libraries/glfw-3.3.9/include/GLFW)
 add_subdirectory(libraries/glfw-3.3.9)
 
+
 set(SOURCE_FILES source/main.cpp
         source/game.cpp
         libraries/glad/src/glad.c
-        source/state/GameState.cpp
+        source/state/gameState.cpp
         source/state/splashScreen.cpp
         source/state/mainMenu.cpp
         source/state/overworld.cpp
+        source/rendering/renderer2D.cpp
+        source/utility/resourceLoader.cpp
+        source/rendering/texture2D.cpp
+        source/rendering/shader.cpp
 )
 
 set(HEADER_FILES includes/game.h
         includes/types.h
         includes/utility/systemTimer.h
         includes/state/gameState.h
-        includes/state/State.h
+        includes/state/state.h
         includes/state/splashScreen.h
         includes/state/mainMenu.h
         includes/state/overworld.h
-
+        includes/rendering/renderer2D.h
+        includes/utility/resourceLoader.h
+        includes/rendering/texture2D.h
+        includes/rendering/shader.h
 )
 
 if(WIN32)
@@ -66,6 +82,7 @@ elseif(APPLE)
 endif()
 
 add_executable(Onslaught ${SOURCE_FILES} ${HEADER_FILES})
+add_dependencies(Onslaught copy_assets)
 
 #Stops the command prompt from appearing in windows
 if(WIN32)

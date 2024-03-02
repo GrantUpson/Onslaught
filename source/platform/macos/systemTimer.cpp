@@ -3,5 +3,11 @@
 
 
 uint64 SystemTimer::GetTickCountSinceInitialization() {
-    return mach_absolute_time() / 1000000;
+    static mach_timebase_info_data_t timebase;
+
+    if (timebase.denom == 0) {
+        mach_timebase_info(&timebase);
+    }
+
+    return mach_absolute_time() * timebase.numer / timebase.denom;
 }

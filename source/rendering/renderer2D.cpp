@@ -1,12 +1,11 @@
-#include "rendering/renderer2D.h"
-
+#include <string>
 #include <iostream>
 #include <array>
 
+#include "rendering/renderer2D.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "types.h"
-#include <string>
 #include "utility/resourceLoader.h"
 
 
@@ -30,16 +29,24 @@ static struct RendererData {
     uint32 indexBuffer = 0;
     uint32 indexCount = 0;
 
+    Vector4 quadVertexPositions[4];
     QuadVertex* verticesBase = nullptr;
     QuadVertex* verticesOffset = nullptr;
     std::array<uint32, MAX_TEXTURE_SLOTS> textures {};
+
+    Matrix4 projection;
 
     Renderer2D::Statistics statistics;
 } RendererData;
 
 
 void Renderer2D::Initialize() {
-    RendererData.verticesBase = new QuadVertex[MAX_QUADS];
+    RendererData.verticesBase = new QuadVertex[MAX_VERTICES];
+
+    RendererData.quadVertexPositions[0] = {-0.5f, -0.5f, 0.0f, 1.0f};
+    RendererData.quadVertexPositions[0] = { 0.5f, -0.5f, 0.0f, 1.0f};
+    RendererData.quadVertexPositions[0] = { 0.5f,  0.5f, 0.0f, 1.0f};
+    RendererData.quadVertexPositions[0] = {-0.5f,  0.5f, 0.0f, 1.0f};
 
     glGenVertexArrays(1, &RendererData.vertexAttributes);
     glBindVertexArray(RendererData.vertexAttributes);
@@ -49,20 +56,20 @@ void Renderer2D::Initialize() {
     glBufferData(GL_ARRAY_BUFFER, MAX_VERTICES * sizeof(QuadVertex), nullptr, GL_DYNAMIC_DRAW);
 
     // Position attributes
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), (const void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), (const void*)nullptr);
 
     // Colour attributes
-    glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), (const void*)offsetof(QuadVertex, colour));
+    glEnableVertexAttribArray(1);
 
     // Texture coordinates attributes
-    glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), (const void*)offsetof(QuadVertex, textureCoordinates));
+    glEnableVertexAttribArray(2);
 
     // Texture index attribute
-    glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), (const void*)offsetof(QuadVertex, textureIndex));
+    glEnableVertexAttribArray(3);
 
     uint32 indices[MAX_INDICES];
     uint32 offset = 0;
@@ -83,12 +90,20 @@ void Renderer2D::Initialize() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, RendererData.indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    //TODO setup and load all game textures here
-
     ResourceLoader::LoadShader("default", "assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl");
     ResourceLoader::GetShader("default")->Bind();
 
-    SetClearColour({0.0f, 0.0f, 0.0f, 1.0f});
+    //TODO setup and load all game textures here
+    /*const int32 location = glGetUniformLocation(ResourceLoader::GetShader("default")->GetId(), "textures");
+    int32 samplers[MAX_TEXTURE_SLOTS];
+
+    for(int32 i = 0; i < MAX_TEXTURE_SLOTS; i++) {
+        samplers[i] = i;
+    }
+
+
+
+    SetClearColour({1.0f, 0.0f, 0.0f, 1.0f}); */
 }
 
 
@@ -107,7 +122,7 @@ void Renderer2D::SetViewport(const uint32 x, const uint32 y, const uint32 width,
 
 
 void Renderer2D::SetClearColour(const Vector4 colour) {
-    glClearColor(colour.r, colour.b, colour.g, colour.a);
+    glClearColor(colour.r, colour.g, colour.b, colour.a);
 }
 
 
@@ -167,6 +182,44 @@ void Renderer2D::DrawQuad(const Vector3& position, const Vector2& size, const Ve
 }
 
 
+void Renderer2D::DrawTile(const Vector3& position, const Vector2& size, const Vector4& colour, const Tile& textureCoordinates, const float textureIndex) {
+    if(RendererData.indexCount >= MAX_INDICES) {
+        NextBatch();
+    }
+
+    // Vertex 1
+
+    RendererData.verticesOffset->colour = colour;
+    RendererData.verticesOffset->textureCoordinates = textureCoordinates.textureCoordinates[0];
+    RendererData.verticesOffset->textureIndex = textureIndex;
+    RendererData.verticesOffset++;
+
+    // Vertex 2
+    RendererData.verticesOffset->position = {position.x + size.x, position.y, position.z};
+    RendererData.verticesOffset->colour = colour;
+    RendererData.verticesOffset->textureCoordinates = textureCoordinates.textureCoordinates[1];
+    RendererData.verticesOffset->textureIndex = textureIndex;
+    RendererData.verticesOffset++;
+
+    // Vertex 3
+    RendererData.verticesOffset->position = {position.x + size.x, position.y + size.y, position.z};
+    RendererData.verticesOffset->colour = colour;
+    RendererData.verticesOffset->textureCoordinates = textureCoordinates.textureCoordinates[2];
+    RendererData.verticesOffset->textureIndex = textureIndex;
+    RendererData.verticesOffset++;
+
+    // Vertex 4
+    RendererData.verticesOffset->position = {position.x, position.y + size.y, position.z};
+    RendererData.verticesOffset->colour = colour;
+    RendererData.verticesOffset->textureCoordinates = textureCoordinates.textureCoordinates[3];
+    RendererData.verticesOffset->textureIndex = textureIndex;
+    RendererData.verticesOffset++;
+
+    RendererData.indexCount += 6;
+    RendererData.statistics.quadCount++;
+}
+
+
 void Renderer2D::StartBatch() {
     RendererData.verticesOffset = RendererData.verticesBase;
     RendererData.indexCount = 0;
@@ -182,10 +235,8 @@ void Renderer2D::NextBatch() {
 void Renderer2D::Flush() {
     if(RendererData.indexCount > 0) {
         GLsizeiptr dataSize = (uint8_t*)RendererData.verticesOffset - (uint8_t*)RendererData.verticesBase;
-        //glBindBuffer(GL_ARRAY_BUFFER, RendererData.vertexBuffer);
         glBufferSubData(GL_ARRAY_BUFFER, 0, dataSize, (const void*)RendererData.verticesBase);
 
-        //glBindVertexArray(RendererData.vertexAttributes);
         glDrawElements(GL_TRIANGLES, RendererData.indexCount, GL_UNSIGNED_INT, nullptr);
         RendererData.statistics.drawCalls++;
     }

@@ -37,6 +37,10 @@ set(SOURCE_FILES source/main.cpp
         source/utility/resourceLoader.cpp
         source/rendering/texture2D.cpp
         source/rendering/shader.cpp
+        libraries/stb_image/stb_image.cpp
+        source/maps/tile.cpp
+        source/rendering/orthographicCamera.cpp
+        source/gameplay/player.cpp
 )
 
 set(HEADER_FILES includes/game.h
@@ -51,6 +55,10 @@ set(HEADER_FILES includes/game.h
         includes/utility/resourceLoader.h
         includes/rendering/texture2D.h
         includes/rendering/shader.h
+        libraries/stb_image/stb_image.h
+        includes/maps/tile.h
+        includes/rendering/orthographicCamera.h
+        includes/gameplay/player.h
 )
 
 if(WIN32)

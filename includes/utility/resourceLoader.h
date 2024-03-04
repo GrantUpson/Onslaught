@@ -12,8 +12,8 @@ public:
     static Reference<Shader> GetShader(const std::string& name);
     static void LoadShader(const std::string& name, const std::string& vertexFilepath, const std::string& fragmentFilepath);
 
-    //static Reference<Texture2D> LoadTexture(std::string& filepath, std::string& name, bool alpha);
-    //static Reference<Texture2D> GetTexture(std::string& name);
+    static void LoadTexture(const std::string& name, const std::string& filepath);
+    static Reference<Texture2D> GetTexture(const std::string& name);
 
 private:
     ResourceLoader() = default;

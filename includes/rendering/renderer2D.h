@@ -2,6 +2,7 @@
 #define RENDERER2D_H
 
 #include "types.h"
+#include "maps/tile.h"
 
 
 class Renderer2D {
@@ -15,6 +16,7 @@ public:
 
     static void BeginScene();
     static void DrawQuad(const Vector3& position, const Vector2& size, const Vector4& colour, const Vector2& textureCoordinates, float textureIndex);
+    static void DrawTile(const Vector3& position, const Vector2& size, const Vector4& colour, const Tile& textureCoordinates, float textureIndex);
     static void EndScene();
 
     struct Statistics {

@@ -34,5 +34,17 @@ void Overworld::Render() {
         }
     }
 
+    //float tilesheetWidth = (float)ResourceLoader::GetTexture("default")->GetWidth();
+    //float tilesheetHeight = (float)ResourceLoader::GetTexture("default")->GetHeight();
+
+    /*for(int y = 0; y < 5; y++) {
+        for(int x = 0; x < 5; x++) {
+            Renderer2D::DrawQuad({x, y, 1.0}, {16.0f / tilesheetWidth, 16.0f / tilesheetHeight}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, 1.0f);
+        }
+    }
+    //Renderer2D::DrawQuad({0.0f, 0.0f, 0.0}, {1.0f, 1.0f}, {0.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, 0.0f);
+    Tile tile = Tile::CreateFromCoordinates({1, 1}, {16, 16});
+    Renderer2D::DrawTile({0.0f, 0.0f, 0.5f}, {1.0f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, tile, 0.0f); */
+
     Renderer2D::EndScene();
 }

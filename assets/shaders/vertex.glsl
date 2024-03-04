@@ -9,8 +9,13 @@ out vec4 fragmentColour;
 out vec2 fragmentTextureCoordinates;
 out float fragmentTextureId;
 
+uniform mat4 projection;
+uniform mat4 model;
+
 void main() {
-    gl_Position = vec4(position, 1.0);
+    //gl_Position = viewProjection * vec4(position, 1.0);
+    gl_Position = projection * model * vec4(position, 1.0);
+
     fragmentColour = colour;
     fragmentTextureCoordinates = textureCoordinates;
     fragmentTextureId = textureId;

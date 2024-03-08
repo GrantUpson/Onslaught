@@ -30,20 +30,15 @@ Window::Window(std::string title, bool windowedModeEnabled, bool vSyncEnabled, u
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     glfwWindowHint(GLFW_AUTO_ICONIFY, GL_FALSE);
 
-    //GLFWmonitor* monitor = glfwGetPrimaryMonitor(); //
-    //const GLFWvidmode* mode = glfwGetVideoMode(monitor);//
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-    //window = glfwCreateWindow(mode->width, mode->height, title.c_str(), monitor, nullptr);//
-    window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//
+    window = glfwCreateWindow(width, height, title.c_str(), monitor, nullptr);//
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//
 
     if(!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
-    }
-
-    if(windowedModeEnabled) {
-        //glfwSetWindowMonitor(window, monitor, 0, 0, width, height, mode->refreshRate);//
     }
 
     glfwMakeContextCurrent(window);
@@ -54,6 +49,11 @@ Window::Window(std::string title, bool windowedModeEnabled, bool vSyncEnabled, u
     }
 
     glViewport(0, 0, width, height);
+
+    if(windowedModeEnabled) {
+        glfwSetWindowMonitor(window, nullptr, 0, 0, width, height, mode->refreshRate);//
+        glfwSetWindowPos(window, (mode->width - width) / 2, (mode->height - height) / 2);
+    }
 }
 
 

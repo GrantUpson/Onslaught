@@ -13,5 +13,5 @@ void main() {
    //outColour = fragmentColour;
    //outColour = texture(textures[index], fragmentTextureCoordinates) * fragmentColour;
 
-   outColour = texture(textures, fragmentTextureCoordinates);
+   outColour = texture(textures, fragmentTextureCoordinates) * fragmentColour;
 }

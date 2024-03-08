@@ -40,6 +40,7 @@ set(SOURCE_FILES source/main.cpp
         libraries/stb_image/stb_image.cpp
         source/maps/tile.cpp
         source/rendering/orthographicCamera.cpp
+        source/maps/map.cpp
 )
 
 set(HEADER_FILES includes/game.h
@@ -57,6 +58,7 @@ set(HEADER_FILES includes/game.h
         libraries/stb_image/stb_image.h
         includes/maps/tile.h
         includes/rendering/orthographicCamera.h
+        includes/maps/map.h
 )
 
 if(WIN32)

@@ -133,48 +133,49 @@ void Renderer2D::EndScene() {
 }
 
 
-void Renderer2D::DrawQuad(const Vector3& position, const Vector2& size, const Vector4& colour, const Vector2& textureCoordinates, const float textureIndex) {
+void Renderer2D::DrawQuad(const Vector3& position, const Vector2& size, const Vector4& colour, const Vector2 textureCoordinates[4], const float textureIndex) {
     if(RendererData.indexCount >= MAX_INDICES) {
         NextBatch();
     }
 
-    //Remove this and replace with
+    /*
+    //Remove this and replace with using actual coordinates
     constexpr float x = 17, y = 4;
     constexpr float sheetWidth = 640.0f, sheetHeight = 368.0f;
     constexpr float spriteWidth = 16.0f, spriteHeight = 16.0f;
 
     constexpr Vector2 textureCoordinate[4] = {
-        {(x * spriteWidth) / sheetWidth, (y * spriteHeight) / sheetHeight},
-        {((x + 1) * spriteWidth) / sheetWidth, (y * spriteHeight) / sheetHeight},
-        {((x + 1) * spriteWidth) / sheetWidth, ((y + 1) * spriteHeight) / sheetHeight},
-        {(x * spriteWidth) / sheetWidth, ((y + 1) * spriteHeight) / sheetHeight},
-    };
+        {x * spriteWidth / sheetWidth, (y + 1) * spriteHeight / sheetHeight},
+        {(x + 1) * spriteWidth / sheetWidth, (y + 1) * spriteHeight / sheetHeight},
+        {(x + 1) * spriteWidth / sheetWidth, y * spriteHeight / sheetHeight},
+        {x * spriteWidth / sheetWidth, y * spriteHeight / sheetHeight}
+    };*/
 
     // Vertex 1 [Bottom Left]
     RendererData.verticesOffset->position = position;
     RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinate[0];
+    RendererData.verticesOffset->textureCoordinates = textureCoordinates[0];
     RendererData.verticesOffset->textureIndex = textureIndex;
     RendererData.verticesOffset++;
 
     // Vertex 2 [Bottom Right]
     RendererData.verticesOffset->position = {position.x + size.x, position.y, position.z};
     RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinate[1];
+    RendererData.verticesOffset->textureCoordinates = textureCoordinates[1];
     RendererData.verticesOffset->textureIndex = textureIndex;
     RendererData.verticesOffset++;
 
     // Vertex 3 [Top Right]
     RendererData.verticesOffset->position = {position.x + size.x, position.y + size.y, position.z};
     RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinate[2];
+    RendererData.verticesOffset->textureCoordinates = textureCoordinates[2];
     RendererData.verticesOffset->textureIndex = textureIndex;
     RendererData.verticesOffset++;
 
     // Vertex 4 [Top Left]
     RendererData.verticesOffset->position = {position.x, position.y + size.y, position.z};
     RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinate[3];
+    RendererData.verticesOffset->textureCoordinates = textureCoordinates[3];
     RendererData.verticesOffset->textureIndex = textureIndex;
     RendererData.verticesOffset++;
 

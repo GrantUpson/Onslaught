@@ -13,8 +13,7 @@ bool Game::Initialize() {
     //TODO Load from settings
 
     //TODO Create window with settings loaded
-    window = std::make_unique<Window>("Onslaught", true, true, 640, 360);
-    //window = std::make_unique<Window>("Onslaught", true, true, 1920, 1080);
+    window = std::make_unique<Window>("Onslaught", true, true, 640 * 2, 360 * 2);
     Renderer2D::Initialize();
     GameState::SetCurrentGameState(std::make_unique<Overworld>());
 

@@ -14,15 +14,15 @@ public:
     static void Clear();
 
     static void BeginScene();
-    static void DrawQuad(const Vector3& position, const Vector2& size, const Vector4& colour, const Vector2& textureCoordinates, float textureIndex);
+    static void DrawQuad(const Vector3& position, const Vector2& size, const Vector4& colour, const Vector2 textureCoordinates[4], float textureIndex);
     static void EndScene();
 
     struct Statistics {
         uint32 drawCalls = 0;
         uint32 quadCount = 0;
 
-        [[nodiscard]] uint32 GetTotalVertexCount() const { return quadCount * 4; }
-        [[nodiscard]] uint32 GetTotalIndexCount() const { return quadCount * 6; }
+        uint32 GetTotalVertexCount() const { return quadCount * 4; }
+        uint32 GetTotalIndexCount() const { return quadCount * 6; }
     };
 
     static void ResetStatistics();

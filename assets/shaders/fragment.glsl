@@ -6,11 +6,12 @@ in vec4 fragmentColour;
 in vec2 fragmentTextureCoordinates;
 in float fragmentTextureId;
 
-//uniform sampler2D textures[16];
-//uniform sampler2D ourTexture;
+uniform sampler2D textures;
 
 void main() {
    //int index = int(fragmentTextureId);
-   outColour = fragmentColour;
+   //outColour = fragmentColour;
    //outColour = texture(textures[index], fragmentTextureCoordinates) * fragmentColour;
+
+   outColour = texture(textures, fragmentTextureCoordinates);
 }

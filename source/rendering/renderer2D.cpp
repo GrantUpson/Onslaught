@@ -29,12 +29,9 @@ static struct RendererData {
     uint32 indexBuffer = 0;
     uint32 indexCount = 0;
 
-    Vector4 quadVertexPositions[4];
     QuadVertex* verticesBase = nullptr;
     QuadVertex* verticesOffset = nullptr;
     std::array<uint32, MAX_TEXTURE_SLOTS> textures {};
-
-    Matrix4 projection;
 
     Renderer2D::Statistics statistics;
 } RendererData;
@@ -42,11 +39,6 @@ static struct RendererData {
 
 void Renderer2D::Initialize() {
     RendererData.verticesBase = new QuadVertex[MAX_VERTICES];
-
-    RendererData.quadVertexPositions[0] = {-0.5f, -0.5f, 0.0f, 1.0f};
-    RendererData.quadVertexPositions[0] = { 0.5f, -0.5f, 0.0f, 1.0f};
-    RendererData.quadVertexPositions[0] = { 0.5f,  0.5f, 0.0f, 1.0f};
-    RendererData.quadVertexPositions[0] = {-0.5f,  0.5f, 0.0f, 1.0f};
 
     glGenVertexArrays(1, &RendererData.vertexAttributes);
     glBindVertexArray(RendererData.vertexAttributes);
@@ -93,17 +85,14 @@ void Renderer2D::Initialize() {
     ResourceLoader::LoadShader("default", "assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl");
     ResourceLoader::GetShader("default")->Bind();
 
-    //TODO setup and load all game textures here
-    /*const int32 location = glGetUniformLocation(ResourceLoader::GetShader("default")->GetId(), "textures");
-    int32 samplers[MAX_TEXTURE_SLOTS];
+    //TODO Load all textures
+    ResourceLoader::LoadTexture("overworld", "assets/textures/overworld.png");
+    glBindTexture(GL_TEXTURE_2D, ResourceLoader::GetTexture("overworld")->GetId());
 
-    for(int32 i = 0; i < MAX_TEXTURE_SLOTS; i++) {
-        samplers[i] = i;
-    }
+    SetClearColour({0.32f, 0.59f, 0.33f, 1.0});
 
-
-
-    SetClearColour({1.0f, 0.0f, 0.0f, 1.0f}); */
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 
@@ -121,7 +110,7 @@ void Renderer2D::SetViewport(const uint32 x, const uint32 y, const uint32 width,
 }
 
 
-void Renderer2D::SetClearColour(const Vector4 colour) {
+void Renderer2D::SetClearColour(const Vector4& colour) {
     glClearColor(colour.r, colour.g, colour.b, colour.a);
 }
 
@@ -149,69 +138,43 @@ void Renderer2D::DrawQuad(const Vector3& position, const Vector2& size, const Ve
         NextBatch();
     }
 
-    // Vertex 1
+    //Remove this and replace with
+    constexpr float x = 17, y = 4;
+    constexpr float sheetWidth = 640.0f, sheetHeight = 368.0f;
+    constexpr float spriteWidth = 16.0f, spriteHeight = 16.0f;
+
+    constexpr Vector2 textureCoordinate[4] = {
+        {(x * spriteWidth) / sheetWidth, (y * spriteHeight) / sheetHeight},
+        {((x + 1) * spriteWidth) / sheetWidth, (y * spriteHeight) / sheetHeight},
+        {((x + 1) * spriteWidth) / sheetWidth, ((y + 1) * spriteHeight) / sheetHeight},
+        {(x * spriteWidth) / sheetWidth, ((y + 1) * spriteHeight) / sheetHeight},
+    };
+
+    // Vertex 1 [Bottom Left]
     RendererData.verticesOffset->position = position;
     RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates;
+    RendererData.verticesOffset->textureCoordinates = textureCoordinate[0];
     RendererData.verticesOffset->textureIndex = textureIndex;
     RendererData.verticesOffset++;
 
-    // Vertex 2
+    // Vertex 2 [Bottom Right]
     RendererData.verticesOffset->position = {position.x + size.x, position.y, position.z};
     RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates;
+    RendererData.verticesOffset->textureCoordinates = textureCoordinate[1];
     RendererData.verticesOffset->textureIndex = textureIndex;
     RendererData.verticesOffset++;
 
-    // Vertex 3
+    // Vertex 3 [Top Right]
     RendererData.verticesOffset->position = {position.x + size.x, position.y + size.y, position.z};
     RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates;
+    RendererData.verticesOffset->textureCoordinates = textureCoordinate[2];
     RendererData.verticesOffset->textureIndex = textureIndex;
     RendererData.verticesOffset++;
 
-    // Vertex 4
+    // Vertex 4 [Top Left]
     RendererData.verticesOffset->position = {position.x, position.y + size.y, position.z};
     RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates;
-    RendererData.verticesOffset->textureIndex = textureIndex;
-    RendererData.verticesOffset++;
-
-    RendererData.indexCount += 6;
-    RendererData.statistics.quadCount++;
-}
-
-
-void Renderer2D::DrawTile(const Vector3& position, const Vector2& size, const Vector4& colour, const Tile& textureCoordinates, const float textureIndex) {
-    if(RendererData.indexCount >= MAX_INDICES) {
-        NextBatch();
-    }
-
-    // Vertex 1
-
-    RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates.textureCoordinates[0];
-    RendererData.verticesOffset->textureIndex = textureIndex;
-    RendererData.verticesOffset++;
-
-    // Vertex 2
-    RendererData.verticesOffset->position = {position.x + size.x, position.y, position.z};
-    RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates.textureCoordinates[1];
-    RendererData.verticesOffset->textureIndex = textureIndex;
-    RendererData.verticesOffset++;
-
-    // Vertex 3
-    RendererData.verticesOffset->position = {position.x + size.x, position.y + size.y, position.z};
-    RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates.textureCoordinates[2];
-    RendererData.verticesOffset->textureIndex = textureIndex;
-    RendererData.verticesOffset++;
-
-    // Vertex 4
-    RendererData.verticesOffset->position = {position.x, position.y + size.y, position.z};
-    RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates.textureCoordinates[3];
+    RendererData.verticesOffset->textureCoordinates = textureCoordinate[3];
     RendererData.verticesOffset->textureIndex = textureIndex;
     RendererData.verticesOffset++;
 

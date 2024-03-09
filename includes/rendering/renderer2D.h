@@ -1,6 +1,7 @@
 #ifndef RENDERER2D_H
 #define RENDERER2D_H
 
+#include "orthographicCamera.h"
 #include "types.h"
 
 
@@ -13,8 +14,9 @@ public:
     static void SetClearColour(const Vector4& colour);
     static void Clear();
 
-    static void BeginScene();
+    static void BeginScene(const OrthographicCamera& camera);
     static void DrawQuad(const Vector3& position, const Vector2& size, const Vector4& colour, const Vector2 textureCoordinates[4], float textureIndex);
+    static void DrawQuad(const Matrix4& transform, const Vector4& tintColour, const Vector2 textureCoordinates[4], float textureIndex);
     static void EndScene();
 
     struct Statistics {

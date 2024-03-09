@@ -3,6 +3,9 @@
 #include <array>
 
 #include "rendering/renderer2D.h"
+
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "types.h"
@@ -31,20 +34,26 @@ static struct RendererData {
 
     QuadVertex* verticesBase = nullptr;
     QuadVertex* verticesOffset = nullptr;
+    Vector4 quadVertexPositions[4];
     std::array<uint32, MAX_TEXTURE_SLOTS> textures {};
 
     Renderer2D::Statistics statistics;
-} RendererData;
+} Data;
 
 
 void Renderer2D::Initialize() {
-    RendererData.verticesBase = new QuadVertex[MAX_VERTICES];
+    Data.verticesBase = new QuadVertex[MAX_VERTICES];
 
-    glGenVertexArrays(1, &RendererData.vertexAttributes);
-    glBindVertexArray(RendererData.vertexAttributes);
+    Data.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+    Data.quadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
+    Data.quadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
+    Data.quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
-    glGenBuffers(1, &RendererData.vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, RendererData.vertexBuffer);
+    glGenVertexArrays(1, &Data.vertexAttributes);
+    glBindVertexArray(Data.vertexAttributes);
+
+    glGenBuffers(1, &Data.vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, Data.vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, MAX_VERTICES * sizeof(QuadVertex), nullptr, GL_DYNAMIC_DRAW);
 
     // Position attributes
@@ -78,8 +87,8 @@ void Renderer2D::Initialize() {
         offset += 4;
     }
 
-    glGenBuffers(1, &RendererData.indexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, RendererData.indexBuffer);
+    glGenBuffers(1, &Data.indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Data.indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     ResourceLoader::LoadShader("default", "assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl");
@@ -89,7 +98,7 @@ void Renderer2D::Initialize() {
     ResourceLoader::LoadTexture("overworld", "assets/textures/overworld.png");
     glBindTexture(GL_TEXTURE_2D, ResourceLoader::GetTexture("overworld")->GetId());
 
-    SetClearColour({0.32f, 0.59f, 0.33f, 1.0});
+    SetClearColour({0.0f, 0.0f, 0.0f, 1.0});
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -97,11 +106,11 @@ void Renderer2D::Initialize() {
 
 
 void Renderer2D::Shutdown() {
-    glDeleteVertexArrays(1, &RendererData.vertexAttributes);
-    glDeleteBuffers(1, &RendererData.vertexBuffer);
-    glDeleteBuffers(1, &RendererData.indexBuffer);
+    glDeleteVertexArrays(1, &Data.vertexAttributes);
+    glDeleteBuffers(1, &Data.vertexBuffer);
+    glDeleteBuffers(1, &Data.indexBuffer);
 
-    delete[] RendererData.verticesBase;
+    delete[] Data.verticesBase;
 }
 
 
@@ -120,7 +129,8 @@ void Renderer2D::Clear() {
 }
 
 
-void Renderer2D::BeginScene() {
+void Renderer2D::BeginScene(const OrthographicCamera& camera) {
+    ResourceLoader::GetShader("default")->SetUniformMatrix4("viewProjection", camera.GetViewProjectionMatrix());
     Clear();
     ResetStatistics();
     StartBatch();
@@ -129,64 +139,40 @@ void Renderer2D::BeginScene() {
 
 void Renderer2D::EndScene() {
     Flush();
-    std::cout << "Draw Calls: " << RendererData.statistics.drawCalls << "\nQuads Drawn: " << RendererData.statistics.quadCount << std::endl;
+    std::cout << "Draw Calls: " << Data.statistics.drawCalls << "\nQuads Drawn: " << Data.statistics.quadCount << std::endl;
 }
 
 
 void Renderer2D::DrawQuad(const Vector3& position, const Vector2& size, const Vector4& colour, const Vector2 textureCoordinates[4], const float textureIndex) {
-    if(RendererData.indexCount >= MAX_INDICES) {
+    const Matrix4 transform = translate(Matrix4(1.0f), position) * scale(Matrix4(1.0f), { size.x, size.y, 1.0f });
+    DrawQuad(transform, colour, textureCoordinates, textureIndex);
+}
+
+
+void Renderer2D::DrawQuad(const Matrix4& transform, const Vector4& tintColour, const Vector2 textureCoordinates[4], const float textureIndex) {
+    constexpr size_t QUAD_VERTEX_COUNT = 4;
+
+    if(Data.indexCount >= MAX_INDICES) {
         NextBatch();
     }
 
-    /*
-    //Remove this and replace with using actual coordinates
-    constexpr float x = 17, y = 4;
-    constexpr float sheetWidth = 640.0f, sheetHeight = 368.0f;
-    constexpr float spriteWidth = 16.0f, spriteHeight = 16.0f;
+    // BL -> BR -> TR -> TL
+    for(size_t i = 0; i < QUAD_VERTEX_COUNT; ++i) {
+        Data.verticesOffset->position = transform * Data.quadVertexPositions[i];
+        Data.verticesOffset->colour = tintColour;
+        Data.verticesOffset->textureCoordinates = textureCoordinates[i];
+        Data.verticesOffset->textureIndex = textureIndex;
+        Data.verticesOffset++;
+    }
 
-    constexpr Vector2 textureCoordinate[4] = {
-        {x * spriteWidth / sheetWidth, (y + 1) * spriteHeight / sheetHeight},
-        {(x + 1) * spriteWidth / sheetWidth, (y + 1) * spriteHeight / sheetHeight},
-        {(x + 1) * spriteWidth / sheetWidth, y * spriteHeight / sheetHeight},
-        {x * spriteWidth / sheetWidth, y * spriteHeight / sheetHeight}
-    };*/
-
-    // Vertex 1 [Bottom Left]
-    RendererData.verticesOffset->position = position;
-    RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates[0];
-    RendererData.verticesOffset->textureIndex = textureIndex;
-    RendererData.verticesOffset++;
-
-    // Vertex 2 [Bottom Right]
-    RendererData.verticesOffset->position = {position.x + size.x, position.y, position.z};
-    RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates[1];
-    RendererData.verticesOffset->textureIndex = textureIndex;
-    RendererData.verticesOffset++;
-
-    // Vertex 3 [Top Right]
-    RendererData.verticesOffset->position = {position.x + size.x, position.y + size.y, position.z};
-    RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates[2];
-    RendererData.verticesOffset->textureIndex = textureIndex;
-    RendererData.verticesOffset++;
-
-    // Vertex 4 [Top Left]
-    RendererData.verticesOffset->position = {position.x, position.y + size.y, position.z};
-    RendererData.verticesOffset->colour = colour;
-    RendererData.verticesOffset->textureCoordinates = textureCoordinates[3];
-    RendererData.verticesOffset->textureIndex = textureIndex;
-    RendererData.verticesOffset++;
-
-    RendererData.indexCount += 6;
-    RendererData.statistics.quadCount++;
+    Data.indexCount += 6;
+    Data.statistics.quadCount++;
 }
 
 
 void Renderer2D::StartBatch() {
-    RendererData.verticesOffset = RendererData.verticesBase;
-    RendererData.indexCount = 0;
+    Data.verticesOffset = Data.verticesBase;
+    Data.indexCount = 0;
 }
 
 
@@ -197,22 +183,22 @@ void Renderer2D::NextBatch() {
 
 
 void Renderer2D::Flush() {
-    if(RendererData.indexCount > 0) {
-        GLsizeiptr dataSize = (uint8_t*)RendererData.verticesOffset - (uint8_t*)RendererData.verticesBase;
-        glBufferSubData(GL_ARRAY_BUFFER, 0, dataSize, (const void*)RendererData.verticesBase);
+    if(Data.indexCount > 0) {
+        const GLsizeiptr dataSize = (uint8_t*)Data.verticesOffset - (uint8_t*)Data.verticesBase;
+        glBufferSubData(GL_ARRAY_BUFFER, 0, dataSize, (const void*)Data.verticesBase);
 
-        glDrawElements(GL_TRIANGLES, RendererData.indexCount, GL_UNSIGNED_INT, nullptr);
-        RendererData.statistics.drawCalls++;
+        glDrawElements(GL_TRIANGLES, Data.indexCount, GL_UNSIGNED_INT, nullptr);
+        Data.statistics.drawCalls++;
     }
 }
 
 
 void Renderer2D::ResetStatistics() {
-    RendererData.statistics.drawCalls = 0;
-    RendererData.statistics.quadCount = 0;
+    Data.statistics.drawCalls = 0;
+    Data.statistics.quadCount = 0;
 }
 
 
 Renderer2D::Statistics Renderer2D::GetStatistics() {
-    return RendererData.statistics;
+    return Data.statistics;
 }

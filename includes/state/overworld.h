@@ -2,7 +2,6 @@
 #define OVERWORLD_H
 
 #include "state.h"
-#include "types.h"
 #include "maps/map.h"
 #include "maps/tile.h"
 #include "rendering/orthographicCamera.h"
@@ -20,8 +19,8 @@ public:
     void Render() override;
 
 private:
-    Reference<OrthographicCamera> camera;
-    Map map {};
+    OrthographicCamera camera {0.0f, 640.0f, 360.0f, 0.0f};
+    Scope<Map> map;
     std::vector<Tile> tiles;
 };
 

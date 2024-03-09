@@ -2,6 +2,7 @@
 #define SHADER_H
 
 #include "types.h"
+#include <string>
 
 
 class Shader {

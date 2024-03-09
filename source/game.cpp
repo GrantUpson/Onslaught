@@ -1,5 +1,5 @@
 #include "game.h"
-
+#include "glfw3.h"
 #include <iostream>
 #include <ostream>
 

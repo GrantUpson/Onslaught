@@ -79,12 +79,10 @@ elseif(APPLE)
     SET(SOURCE_FILES ${SOURCE_FILES}
             source/platform/macos/macOSWindow.cpp
             source/platform/macos/systemTimer.cpp
-
     )
 
     SET(HEADER_FILES ${HEADER_FILES}
             includes/platform/macos/window.h
-
     )
 
 endif()

@@ -26,7 +26,7 @@ struct QuadVertex {
 };
 
 
-static struct RendererData {
+static struct Data {
     uint32 vertexBuffer = 0;
     uint32 vertexAttributes = 0;
     uint32 indexBuffer = 0;

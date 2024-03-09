@@ -33,19 +33,10 @@ void Overworld::Update() {
 void Overworld::Render() {
     Renderer2D::BeginScene(camera);
 
-    static constexpr uint64 timeToHit = 500;
-    static uint64 time;
-
-    time++;
-
-    if(time >= timeToHit) {
-        map->SetTile(1, {15, 14});
-    }
-
     //TODO Grab the visible map tiles and visible entities and draw them
-    for(int x = 0; x < 40; x++) {
-        for(int y = 0; y < 23; y++) {
-            Renderer2D::DrawQuad({x * Tile::width, y * Tile::height, 0.0f}, {Tile::width, Tile::height},
+    for(int y = 0; y < map->GetHeight(); y++) {
+        for(int x = 0; x < map->GetWidth(); x++) { // 0.5 is used to offset the fact that the center of the quad is the origin for positioning.
+            Renderer2D::DrawQuad({(x + 0.5)  * Tile::width, (y + 0.5) * Tile::height, 0.0f}, {Tile::width, Tile::height},
                 {1.0f, 1.0f, 1.0f, 1.0f}, tiles[map->GetTile({x, y})].textureCoordinates, 1);
         }
     }

@@ -44,10 +44,10 @@ static struct Data {
 void Renderer2D::Initialize() {
     Data.verticesBase = new QuadVertex[MAX_VERTICES];
 
-    Data.quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
-    Data.quadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
-    Data.quadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
-    Data.quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+    Data.quadVertexPositions[0] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    Data.quadVertexPositions[1] = { 1.0f, 0.0f, 0.0f, 1.0f };
+    Data.quadVertexPositions[2] = { 1.0f, 1.0f, 0.0f, 1.0f };
+    Data.quadVertexPositions[3] = { 0.0f, 1.0f, 0.0f, 1.0f };
 
     glGenVertexArrays(1, &Data.vertexAttributes);
     glBindVertexArray(Data.vertexAttributes);
@@ -95,11 +95,13 @@ void Renderer2D::Initialize() {
     ResourceLoader::GetShader("default")->Bind();
 
     //TODO Load all textures
-    ResourceLoader::LoadTexture("overworld", "assets/textures/overworld.png");
-    glBindTexture(GL_TEXTURE_2D, ResourceLoader::GetTexture("overworld")->GetId());
+    ResourceLoader::LoadTexture("tiles", "assets/textures/tiles.png");
+    ResourceLoader::LoadTexture("items", "assets/textures/items.png");
+    glBindTexture(GL_TEXTURE_2D, ResourceLoader::GetTexture("tiles")->GetId());
 
     SetClearColour({0.0f, 0.0f, 0.0f, 1.0});
 
+    glDisable(GL_MULTISAMPLE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
@@ -156,7 +158,7 @@ void Renderer2D::DrawQuad(const Matrix4& transform, const Vector4& tintColour, c
         NextBatch();
     }
 
-    // BL -> BR -> TR -> TL
+    // Bottom Left -> Bottom Right -> Top Right -> Top Left
     for(size_t i = 0; i < QUAD_VERTEX_COUNT; ++i) {
         Data.verticesOffset->position = transform * Data.quadVertexPositions[i];
         Data.verticesOffset->colour = tintColour;

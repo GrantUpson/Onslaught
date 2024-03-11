@@ -25,6 +25,7 @@ Scope<Map> Map::LoadMap(const std::string& filePath) {
     tiles[0][1] = 1;
     tiles[18][23] = 3;
     tiles[5][19] = 2;
+    tiles[13][16] = 4;
 
     return std::make_unique<Map>("Temp Name", width, height, tiles);
 }

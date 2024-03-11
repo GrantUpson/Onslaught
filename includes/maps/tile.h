@@ -21,8 +21,8 @@ struct Tile {
     uint32 properties {0};
     Vector2 textureCoordinates[4];
 
-    Tile(Biome biome, uint32 properties, const Vector2& textureCoordinates);
-    static Tile CreateFromCoordinates(Biome biome, uint32 properties, const Vector2& textureCoordinates);
+    Tile(Biome biome, uint32 properties, uint16 x, uint16 y);
+    static Tile CreateFromCoordinates(Biome biome, uint32 properties, uint16 x, uint16 y);
 };
 
 

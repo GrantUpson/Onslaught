@@ -8,10 +8,11 @@ in float fragmentTextureId;
 
 uniform sampler2D textures;
 
+
 void main() {
    //int index = int(fragmentTextureId);
    //outColour = fragmentColour;
    //outColour = texture(textures[index], fragmentTextureCoordinates) * fragmentColour;
 
-   outColour = texture(textures, fragmentTextureCoordinates) * fragmentColour;
+   outColour = texelFetch(textures, ivec2(fragmentTextureCoordinates), 0);
 }

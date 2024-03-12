@@ -12,14 +12,10 @@ public:
     static Reference<Shader> GetShader(const std::string& name);
     static void LoadShader(const std::string& name, const std::string& vertexFilepath, const std::string& fragmentFilepath);
 
-    static void LoadTexture(const std::string& name, const std::string& filepath);
-    static Reference<Texture2D> GetTexture(const std::string& name);
-
 private:
     ResourceLoader() = default;
 
     static std::unordered_map<std::string, Reference<Shader>> shaders;
-    static std::unordered_map<std::string, Reference<Texture2D>> textures;
 };
 
 

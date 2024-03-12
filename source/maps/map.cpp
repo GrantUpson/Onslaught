@@ -10,7 +10,7 @@ Map::~Map() {
 }
 
 
-Scope<Map> Map::LoadMap(const std::string& filePath) {
+Owner<Map> Map::LoadMap(const std::string& filePath) {
     //TODO Load maps from file
 
     uint16 width = 40;

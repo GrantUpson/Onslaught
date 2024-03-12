@@ -9,7 +9,7 @@ class Map {
 public:
     Map(std::string  name, uint16 const width, uint16 const height, uint16** tiles) : name(std::move(name)), width(width), height(height), map(tiles) {}
     ~Map();
-    static Scope<Map> LoadMap(const std::string& filePath);
+    static Owner<Map> LoadMap(const std::string& filePath);
 
     uint32 GetWidth() const;
     uint32 GetHeight() const;

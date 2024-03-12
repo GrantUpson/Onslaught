@@ -15,7 +15,7 @@ public:
 
 private:
     bool isRunning {true};
-    Scope<Window> window;
+    Owner<Window> window;
 };
 
 

@@ -3,7 +3,7 @@
 #include "types.h"
 
 int main() {
-    Scope<Game> game = std::make_unique<Game>();
+    Owner<Game> game = std::make_unique<Game>();
 
     if(game->Initialize()) {
         game->Run();

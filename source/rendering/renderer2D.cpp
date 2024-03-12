@@ -16,6 +16,7 @@ static constexpr size_t MAX_QUADS = 10000;
 static constexpr size_t MAX_VERTICES = MAX_QUADS * 4;
 static constexpr size_t MAX_INDICES = MAX_QUADS * 6;
 static constexpr size_t MAX_TEXTURE_SLOTS = 16;
+static constexpr size_t QUAD_VERTEX_COUNT = 4;
 
 
 struct QuadVertex {
@@ -35,7 +36,6 @@ static struct Data {
     QuadVertex* verticesBase = nullptr;
     QuadVertex* verticesOffset = nullptr;
     Vector4 quadVertexPositions[4];
-    std::array<uint32, MAX_TEXTURE_SLOTS> textures {};
 
     Renderer2D::Statistics statistics;
 } Data;
@@ -95,9 +95,9 @@ void Renderer2D::Initialize() {
     ResourceLoader::GetShader("default")->Bind();
 
     //TODO Load all textures
-    ResourceLoader::LoadTexture("tiles", "assets/textures/tiles.png");
-    ResourceLoader::LoadTexture("items", "assets/textures/items.png");
-    glBindTexture(GL_TEXTURE_2D, ResourceLoader::GetTexture("tiles")->GetId());
+    //ResourceLoader::LoadTexture("tiles", "assets/textures/tiles.png");
+    //ResourceLoader::LoadTexture("items", "assets/textures/items.png");
+    //glBindTexture(GL_TEXTURE_2D, ResourceLoader::GetTexture("tiles")->GetId());
 
     SetClearColour({0.0f, 0.0f, 0.0f, 1.0});
 
@@ -152,8 +152,6 @@ void Renderer2D::DrawQuad(const Vector3& position, const Vector2& size, const Ve
 
 
 void Renderer2D::DrawQuad(const Matrix4& transform, const Vector4& tintColour, const Vector2 textureCoordinates[4], const float textureIndex) {
-    constexpr size_t QUAD_VERTEX_COUNT = 4;
-
     if(Data.indexCount >= MAX_INDICES) {
         NextBatch();
     }

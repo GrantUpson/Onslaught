@@ -29,7 +29,7 @@ template <typename T>
 using Reference = std::shared_ptr<T>;
 
 template <typename T>
-using Scope = std::unique_ptr<T>;
+using Owner = std::unique_ptr<T>;
 
 
 #endif

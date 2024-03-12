@@ -13,7 +13,7 @@ State* GameState::GetCurrentGameState() {
 }
 
 
-void GameState::SetCurrentGameState(Scope<State> newState) {
+void GameState::SetCurrentGameState(Owner<State> newState) {
     if(!currentGameState.empty()) {
         currentGameState.top()->OnExit();
     }
@@ -23,7 +23,7 @@ void GameState::SetCurrentGameState(Scope<State> newState) {
 }
 
 
-void GameState::ReplaceCurrentGameState(Scope<State> newState) {
+void GameState::ReplaceCurrentGameState(Owner<State> newState) {
     RemoveCurrentGameState();
     currentGameState.push(std::move(newState));
 }

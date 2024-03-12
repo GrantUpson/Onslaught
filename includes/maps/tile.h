@@ -11,7 +11,7 @@ enum Biome : uint16 {
 
 
 struct Tile {
-    static constexpr uint8 textureId = 1;
+    static constexpr uint8 textureId = 0;
     static constexpr uint8 width = 16;
     static constexpr uint8 height = 16;
     static constexpr uint16 sheetWidth = 640;

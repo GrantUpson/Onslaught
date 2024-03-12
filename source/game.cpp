@@ -4,6 +4,7 @@
 #include <ostream>
 
 #include "window.h"
+#include "platform/opengl/textureLoader.h"
 #include "rendering/renderer2D.h"
 #include "state/gameState.h"
 #include "state/overworld.h"
@@ -15,6 +16,7 @@ bool Game::Initialize() {
     //TODO Create window with settings loaded
     window = std::make_unique<Window>("Onslaught", true, true, 640 * 3, 360 * 3);
     Renderer2D::Initialize();
+    TextureLoader::Load();
     GameState::SetCurrentGameState(std::make_unique<Overworld>());
 
     return true;
@@ -70,6 +72,7 @@ void Game::Run() {
 
 
 void Game::Shutdown() {
+    TextureLoader::Unload();
     Renderer2D::Shutdown();
     window->Close();
 }

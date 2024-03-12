@@ -20,7 +20,7 @@ public:
 
 private:
     OrthographicCamera camera {0.0f, 640.0f, 360.0f, 0.0f};
-    Scope<Map> map;
+    Owner<Map> map;
     std::vector<Tile> tiles;
 };
 

@@ -12,12 +12,12 @@ public:
     GameState() = default;
 
     static State* GetCurrentGameState();
-    static void SetCurrentGameState(Scope<State> newState);
-    static void ReplaceCurrentGameState(Scope<State> newState);
+    static void SetCurrentGameState(Owner<State> newState);
+    static void ReplaceCurrentGameState(Owner<State> newState);
     static void RemoveCurrentGameState();
 
 private:
-    inline static std::stack<Scope<State>> currentGameState {};
+    inline static std::stack<Owner<State>> currentGameState {};
 };
 
 

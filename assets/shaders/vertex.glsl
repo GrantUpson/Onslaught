@@ -3,7 +3,7 @@
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec4 colour;
 layout (location = 2) in vec2 textureCoordinates;
-layout (location = 3) in float textureId;
+layout (location = 3) in float textureIndex;
 
 uniform mat4 viewProjection;
 
@@ -13,9 +13,9 @@ out float fragmentTextureId;
 
 
 void main() {
-    gl_Position = viewProjection * vec4(position.x, position.y, position.z, 1.0);
+    gl_Position = viewProjection * vec4(position, 1.0);
 
     fragmentColour = colour;
     fragmentTextureCoordinates = textureCoordinates;
-    fragmentTextureId = textureId;
+    fragmentTextureIndex = textureIndex;
 }

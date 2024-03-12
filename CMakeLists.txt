@@ -69,10 +69,12 @@ if(WIN32)
     SET(SOURCE_FILES ${SOURCE_FILES}
             source/platform/windows/windowsWindow.cpp
             source/platform/windows/systemTimer.cpp
+            source/platform/opengl/textureLoader.cpp
     )
 
     SET(HEADER_FILES ${HEADER_FILES}
             includes/platform/windows/window.h
+            includes/platform/opengl/textureLoader.h
     )
 
 elseif(APPLE)
@@ -81,11 +83,12 @@ elseif(APPLE)
     SET(SOURCE_FILES ${SOURCE_FILES}
             source/platform/macos/macOSWindow.cpp
             source/platform/macos/systemTimer.cpp
+            source/platform/opengl/textureLoader.cpp
     )
 
     SET(HEADER_FILES ${HEADER_FILES}
             includes/platform/macos/window.h
-            includes/rendering/sprite.h
+            includes/platform/opengl/textureLoader.h
     )
 
 endif()

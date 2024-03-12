@@ -1,18 +1,15 @@
 #version 330 core
 
-layout (location = 0) out vec4 outColour;
+layout (location = 0) out vec4 outputColour;
 
 in vec4 fragmentColour;
 in vec2 fragmentTextureCoordinates;
-in float fragmentTextureId;
+in float fragmentTextureIndex;
 
-uniform sampler2D textures;
+uniform sampler2DArray textureAtlas;
 
 
 void main() {
-   //int index = int(fragmentTextureId);
-   //outColour = fragmentColour;
-   //outColour = texture(textures[index], fragmentTextureCoordinates) * fragmentColour;
-
-   outColour = texelFetch(textures, ivec2(fragmentTextureCoordinates), 0);
+   int layer = 0;
+   outputColour = texelFetch(textureAtlas, ivec3(fragmentTextureCoordinates, layer), 0) * fragmentColour;
 }

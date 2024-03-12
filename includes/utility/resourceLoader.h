@@ -3,7 +3,6 @@
 
 #include <unordered_map>
 #include "rendering/shader.h"
-#include "rendering/texture2D.h"
 #include <string>
 
 

@@ -99,7 +99,7 @@ void Renderer2D::Initialize() {
     //ResourceLoader::LoadTexture("items", "assets/textures/items.png");
     //glBindTexture(GL_TEXTURE_2D, ResourceLoader::GetTexture("tiles")->GetId());
 
-    SetClearColour({0.0f, 0.0f, 0.0f, 1.0});
+    SetClearColour({1.0f, 0.0f, 1.0f, 1.0});
 
     glDisable(GL_MULTISAMPLE);
     glEnable(GL_BLEND);

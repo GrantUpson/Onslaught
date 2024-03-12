@@ -35,9 +35,9 @@ void Overworld::Render() {
 
     //TODO Grab the visible map tiles and visible entities and draw them
     for(int y = 0; y < map->GetHeight(); y++) {
-        for(int x = 0; x < map->GetWidth(); x++) { // 0.5 is used to offset the fact that the center of the quad is the origin for positioning.
+        for(int x = 0; x < map->GetWidth(); x++) {
             Renderer2D::DrawQuad({x  * Tile::width, y * Tile::height, 0.0f}, {Tile::width, Tile::height},
-                {1.0f, 1.0f, 1.0f, 1.0f}, tiles[map->GetTile({x, y})].textureCoordinates, 1);
+                {1.0f, 1.0f, 1.0f, 1.0f}, tiles[map->GetTile({x, y})].textureCoordinates, Tile::textureId);
         }
     }
 

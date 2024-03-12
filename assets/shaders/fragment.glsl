@@ -10,6 +10,5 @@ uniform sampler2DArray textureAtlas;
 
 
 void main() {
-   int layer = 0;
-   outputColour = texelFetch(textureAtlas, ivec3(fragmentTextureCoordinates, layer), 0) * fragmentColour;
+   outputColour = texelFetch(textureAtlas, ivec3(fragmentTextureCoordinates, int(fragmentTextureIndex)), 0) * fragmentColour;
 }

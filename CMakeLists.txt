@@ -35,7 +35,6 @@ set(SOURCE_FILES source/main.cpp
         source/state/overworld.cpp
         source/rendering/renderer2D.cpp
         source/utility/resourceLoader.cpp
-        source/rendering/texture2D.cpp
         source/rendering/shader.cpp
         libraries/stb_image/stb_image.cpp
         source/maps/tile.cpp
@@ -54,7 +53,6 @@ set(HEADER_FILES includes/game.h
         includes/state/overworld.h
         includes/rendering/renderer2D.h
         includes/utility/resourceLoader.h
-        includes/rendering/texture2D.h
         includes/rendering/shader.h
         libraries/stb_image/stb_image.h
         includes/maps/tile.h

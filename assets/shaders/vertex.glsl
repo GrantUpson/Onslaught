@@ -9,7 +9,7 @@ uniform mat4 viewProjection;
 
 out vec4 fragmentColour;
 out vec2 fragmentTextureCoordinates;
-out float fragmentTextureId;
+out float fragmentTextureIndex;
 
 
 void main() {

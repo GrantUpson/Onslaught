@@ -46,7 +46,7 @@ const Matrix4& OrthographicCamera::GetViewProjectionMatrix() const {
 
 
 void OrthographicCamera::CalculateViewMatrix() {
-    const Matrix4 transform = translate(Matrix4(1.0f), position) * rotate(Matrix4(1.0f), glm::radians(rotation), Vector3(0, 0, 1));
+    const Matrix4 transform = translate(Matrix4(1.0f), position) * rotate(Matrix4(1.0f), glm::radians(rotation), Vector3(0.0f, 0.0f, 1.0f));
     view = inverse(transform);
     viewProjection = projection * view;
 }

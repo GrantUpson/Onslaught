@@ -2,9 +2,10 @@
 #define TEXTURELOADER_H
 
 #include "types.h"
-#include <unordered_map>
+#include <string>
 
 
+//All texture atlases must be identicl sizes to use Texture Arrays
 static constexpr int32 TEXTURE_ATLAS_WIDTH = 640;
 static constexpr int32 TEXTURE_ATLAS_HEIGHT = 368;
 
@@ -14,12 +15,6 @@ enum TextureLayerID : uint8 {
     Creatures = 2,
     Interface = 3,
     TextureLayersCount = 4
-};
-
-struct TextureData {
-    int32 width;
-    int32 height;
-    unsigned char* pixels;
 };
 
 static std::string textureAtlasNames[TextureLayersCount] = {
@@ -38,8 +33,7 @@ public:
 
 private:
     static uint32 textureArrayId;
-
-    static TextureData LoadTextureData(const std::string& filepath);
+    static unsigned char* LoadTextureData(const std::string& filepath);
 };
 
 

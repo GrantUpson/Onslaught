@@ -1,11 +1,7 @@
 #include <string>
 #include <iostream>
-#include <array>
-
 #include "rendering/renderer2D.h"
-
 #include <glm/gtc/matrix_transform.hpp>
-
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "types.h"
@@ -57,7 +53,7 @@ void Renderer2D::Initialize() {
     glBufferData(GL_ARRAY_BUFFER, MAX_VERTICES * sizeof(QuadVertex), nullptr, GL_DYNAMIC_DRAW);
 
     // Position attributes
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), (const void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), nullptr);
     glEnableVertexAttribArray(0);
 
     // Colour attributes
@@ -93,11 +89,6 @@ void Renderer2D::Initialize() {
 
     ResourceLoader::LoadShader("default", "assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl");
     ResourceLoader::GetShader("default")->Bind();
-
-    //TODO Load all textures
-    //ResourceLoader::LoadTexture("tiles", "assets/textures/tiles.png");
-    //ResourceLoader::LoadTexture("items", "assets/textures/items.png");
-    //glBindTexture(GL_TEXTURE_2D, ResourceLoader::GetTexture("tiles")->GetId());
 
     SetClearColour({1.0f, 0.0f, 1.0f, 1.0});
 

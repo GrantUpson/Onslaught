@@ -3,15 +3,20 @@
 
 Map::~Map() {
     for(size_t i = 0; i < height; ++i) {
-        delete map[i];
+        delete baseLayer[i];
+        delete objectLayer[i];
+        delete topLayer[i];
     }
 
-    delete[] map;
+    delete[] baseLayer;
+    delete[] objectLayer;
+    delete[] topLayer;
 }
 
 
 Owner<Map> Map::LoadMap(const std::string& filePath) {
     //TODO Load maps from file
+    //TODO Multiple map laters (hashmap for sparse layers?)
 
     uint16 width = 40;
     uint16 height = 23;
@@ -41,11 +46,20 @@ uint32 Map::GetHeight() const {
 }
 
 
-uint16 Map::GetTile(const Vector2i coordinates) const {
-    return map[coordinates.y][coordinates.x];
+uint16 Map::GetTileIndex(const Vector2i coordinates, const MapLayer layerIndex) const {
+    switch (layerIndex) {
+        case MapLayer::Base: return baseLayer[coordinates.y][coordinates.x];
+        case MapLayer::Object: return objectLayer[coordinates.y][coordinates.x];
+        case MapLayer::Top: return topLayer[coordinates.y][coordinates.x];
+        default: return 0;
+    }
 }
 
 
-void Map::SetTile(const uint16 tile, const Vector2i coordinates) {
-    map[coordinates.y][coordinates.x] = tile;
+void Map::SetTile(const uint16 tile, const Vector2i coordinates, const MapLayer layerIndex) {
+    switch (layerIndex) {
+        case MapLayer::Base: baseLayer[coordinates.y][coordinates.x] = tile;
+        case MapLayer::Object: objectLayer[coordinates.y][coordinates.x] = tile;
+        case MapLayer::Top: topLayer[coordinates.y][coordinates.x] = tile;
+    }
 }

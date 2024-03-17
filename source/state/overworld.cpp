@@ -37,7 +37,7 @@ void Overworld::Render() {
     //TODO Grab the visible map tiles and visible entities and draw them
     for(int y = 0; y < map->GetHeight(); y++) {
         for(int x = 0; x < map->GetWidth(); x++) {
-            const Sprite& sprite = tiles[map->GetTile({x, y})].GetSprite();
+            const Sprite& sprite = tiles[map->GetTileIndex({x, y}, MapLayer::Base)].GetSprite();
             Renderer2D::DrawQuad({x  * 16, y * 16, 0.0f}, {sprite.width, sprite.height},
                 {1.0f, 1.0f, 1.0f, 1.0f}, sprite.textureCoordinates, sprite.textureIndex);
         }

@@ -11,7 +11,7 @@ public:
     ~Shader();
 
     void Bind() const;
-    uint32 GetId() const;
+    [[nodiscard]] uint32 GetId() const;
 
     void SetUniformMatrix4(const std::string& name, const Matrix4& matrix) const;
 

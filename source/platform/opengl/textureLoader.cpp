@@ -36,7 +36,6 @@ unsigned char* TextureLoader::LoadTextureData(const std::string& filepath) {
     int32 height;
     int32 channels;
 
-    stbi_set_flip_vertically_on_load(true);
     unsigned char* pixels = stbi_load(filepath.c_str(), &width, &height, &channels, STBI_rgb_alpha);
 
     if(!pixels) {

@@ -1,5 +1,6 @@
 #include "state/overworld.h"
 #include "rendering/renderer2D.h"
+#include <iostream>
 
 
 Overworld::~Overworld() {
@@ -10,14 +11,13 @@ Overworld::~Overworld() {
 void Overworld::OnEnter() {
     camera = OrthographicCamera(0.0f, 640.0f, 360.0f, 0.0f); //TODO get window size to provide correct viewport
 
-    tiles.emplace_back(0, Forest, Sprite(0, {7.0f, 0.0f}, 16, 16)); //Grass
-    tiles.emplace_back(0, Forest, Sprite(0, {1.0f, 3.0f}, 16, 16)); //Rock
-    tiles.emplace_back(0, Forest, Sprite(0, {9.0f, 6.0f}, 16, 16)); //Grass Tuft
-    tiles.emplace_back(0, Forest, Sprite(0, {17.0f, 4.0f}, 16, 16)); //Mushroom
-    tiles.emplace_back(0, Forest, Sprite(0, {15.0f, 10.0f}, 16, 16)); //Flower
-    tiles.emplace_back(0, Forest, Sprite(0, {16.0f, 9.0f}, 64, 112)); //Tree
+    for(size_t y = 0; y < 150; y++) { //TODO MAY NEED TO SWITCH THESE
+        for(size_t x = 0; x < 140; x++) {
+            tiles.emplace_back(0, Forest, Sprite(0, {x, y}, 16, 16));
+        }
+    }
 
-    map = Map::LoadMap("Temp filepath");
+    map = std::make_unique<Map>("assets/maps/Test_map.txt");
 }
 
 
@@ -34,7 +34,9 @@ void Overworld::Update() {
 void Overworld::Render() {
     Renderer2D::BeginScene(camera);
 
-    //TODO Grab the visible map tiles and visible entities and draw them
+    // TODO Grab the visible map tiles and visible entities and draw them
+
+    // Draw Base Layer
     for(int y = 0; y < map->GetHeight(); y++) {
         for(int x = 0; x < map->GetWidth(); x++) {
             const Sprite& sprite = tiles[map->GetTileIndex({x, y}, MapLayer::Base)].GetSprite();
@@ -43,8 +45,23 @@ void Overworld::Render() {
         }
     }
 
-    Renderer2D::DrawQuad({12  * 16, 12 * 16, 0.0f}, {64, 112},
-                {1.0f, 1.0f, 1.0f, 1.0f}, tiles[5].GetSprite().textureCoordinates, tiles[5].GetSprite().textureIndex);
+    // Draw Object Layer
+    for(int y = 0; y < map->GetHeight(); y++) {
+        for(int x = 0; x < map->GetWidth(); x++) {
+            const Sprite& sprite = tiles[map->GetTileIndex({x, y}, MapLayer::Object)].GetSprite();
+            Renderer2D::DrawQuad({x  * 16, y * 16, 0.0f}, {sprite.width, sprite.height},
+                {1.0f, 1.0f, 1.0f, 1.0f}, sprite.textureCoordinates, sprite.textureIndex);
+        }
+    }
+
+    // Draw Top Layer
+    for(int y = 0; y < map->GetHeight(); y++) {
+        for(int x = 0; x < map->GetWidth(); x++) {
+            const Sprite& sprite = tiles[map->GetTileIndex({x, y}, MapLayer::Top)].GetSprite();
+            Renderer2D::DrawQuad({x  * 16, y * 16, 0.0f}, {sprite.width, sprite.height},
+                {1.0f, 1.0f, 1.0f, 1.0f}, sprite.textureCoordinates, sprite.textureIndex);
+        }
+    }
 
     Renderer2D::EndScene();
 }

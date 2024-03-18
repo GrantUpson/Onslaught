@@ -23,8 +23,8 @@ public:
         uint32 drawCalls = 0;
         uint32 quadCount = 0;
 
-        uint32 GetTotalVertexCount() const { return quadCount * 4; }
-        uint32 GetTotalIndexCount() const { return quadCount * 6; }
+        [[nodiscard]] uint32 GetTotalVertexCount() const { return quadCount * 4; }
+        [[nodiscard]] uint32 GetTotalIndexCount() const { return quadCount * 6; }
     };
 
     static void ResetStatistics();

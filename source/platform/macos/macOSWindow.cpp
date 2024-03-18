@@ -34,7 +34,7 @@ Window::Window(std::string title, bool windowedModeEnabled, bool vSyncEnabled, u
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
     window = glfwCreateWindow(width, height, title.c_str(), monitor, nullptr);//
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//
 
     if(!window) {
         glfwTerminate();

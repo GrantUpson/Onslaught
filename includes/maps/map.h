@@ -4,19 +4,17 @@
 #include "types.h"
 #include <string>
 
-
-enum class MapLayer {
-    Base,
-    Object,
-    Top
+enum class MapLayer : uint8 {
+    Base = 0,
+    Object = 1,
+    Top = 2
 };
 
 
 class Map {
 public:
-    Map(std::string  name, uint16 const width, uint16 const height, uint16** tiles) : name(std::move(name)), width(width), height(height), baseLayer(tiles) {}
+    explicit Map(const std::string& filePath);
     ~Map();
-    static Owner<Map> LoadMap(const std::string& filePath);
 
     [[nodiscard]] uint32 GetWidth() const;
     [[nodiscard]] uint32 GetHeight() const;
@@ -25,7 +23,7 @@ public:
     void SetTile(uint16 tile, Vector2i coordinates, MapLayer layerIndex);
 
 private:
-    const std::string name;
+    std::string name;
     uint32 width {0};
     uint32 height {0};
     uint16** baseLayer {nullptr};

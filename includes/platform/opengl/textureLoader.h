@@ -5,9 +5,9 @@
 #include <string>
 
 
-//All texture atlases must be identicl sizes to use Texture Arrays
-static constexpr int32 TEXTURE_ATLAS_WIDTH = 640;
-static constexpr int32 TEXTURE_ATLAS_HEIGHT = 368;
+// All texture atlases must be identical sizes to use Texture Arrays
+constexpr int32 TEXTURE_ATLAS_WIDTH = 2240;
+constexpr int32 TEXTURE_ATLAS_HEIGHT = 2400;
 
 enum TextureLayerID : uint8 {
     Tiles = 0,
@@ -18,10 +18,10 @@ enum TextureLayerID : uint8 {
 };
 
 static std::string textureAtlasNames[TextureLayersCount] = {
-    "assets/textures/tiles.png",
-    "assets/textures/items.png",
-    "assets/textures/creatures.png",
-    "assets/textures/interface.png"
+    "assets/textures/tilesTest.png",
+    "assets/textures/itemsTest.png",
+    "assets/textures/creaturesTest.png",
+    "assets/textures/interfaceTest.png"
 };
 
 
